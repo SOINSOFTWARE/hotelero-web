@@ -7,15 +7,45 @@
   <version>1.0.0</version>
   <name>hotelero-web Maven Webapp</name>
   <url>http://maven.apache.org</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+    	<groupId>junit</groupId>
+      	<artifactId>junit</artifactId>
+      	<version>3.8.1</version>
+      	<scope>test</scope>
     </dependency>
+    
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+	    <artifactId>jstl</artifactId>
+	    <version>1.2</version>
+	</dependency>
+	
+	<dependency>
+    	<groupId>com.soinsoftware.hotelero</groupId>
+	    <artifactId>hotelero-core</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
+   	
+   	<dependency>
+   		<groupId>org.projectlombok</groupId>
+   		<artifactId>lombok-maven-plugin</artifactId>
+   		<version>1.16.16.0</version>
+  	</dependency>
+  	
+  	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.17</version>
+	</dependency>
   </dependencies>
+  
   <build>
-    <finalName>hotelero-web</finalName>
+    <finalName>hotelero</finalName>
   </build>
 </project>
