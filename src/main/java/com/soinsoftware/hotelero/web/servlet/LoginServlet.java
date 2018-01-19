@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,14 +12,26 @@ import javax.servlet.http.HttpServletResponse;
 import com.soinsoftware.hotelero.core.controller.UserController;
 import com.soinsoftware.hotelero.persistence.entity.User;
 
+import lombok.extern.log4j.Log4j;
+
 /**
  * Servlet implementation class LoginServlet
  */
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "login", urlPatterns = "/login")
+@Log4j
+public class LoginServlet extends AbstractServlet {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7094727863041162821L;
 
-	private static final String PAGE = "./login.jsp";
+	private static final String MSG_NOT_LOGIN = "Usuario y/o contrase&ntilde;a no validos";
+
+	protected static final String VIEW = "/login.jsp";
+
+	protected static final String ATTRIBUTE_USERNAME = "username";
+
+	protected static final String ATTRIBUTE_PASSWORD = "password";
+
+	protected static final String ATTRIBUTE_MESSAGE = "msg";
 
 	private final UserController controller;
 
@@ -33,10 +46,9 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
-		request.setAttribute("username", "");
-		request.setAttribute("password", "");
-		request.setAttribute("msg", "");
-		getRequestDispatcher(request).include(request, response);
+		final RequestDispatcher distpatcher = hasLogged(request) ? setDistpatcherToHome(request, response)
+				: setDistpatcherToLogin(request, "", "", "");
+		distpatcher.include(request, response);
 	}
 
 	/**
@@ -45,28 +57,38 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
-		final String username = request.getParameter("username");
-		final String password = request.getParameter("password");
-		System.out.println(username + " " + password);
-		request.setAttribute("username", username);
-		request.setAttribute("password", password);
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		final User user = controller.select(username, password.toCharArray());
-		if (user != null && user.isEnabled()) {
-			System.out.println("Login completed");
-			request.setAttribute("msg", "Login completed");			
+		final String username = getParameter(request, ATTRIBUTE_USERNAME);
+		final String password = getParameter(request, ATTRIBUTE_PASSWORD);
+		final User user = select(username, password);
+		final boolean isValidLogin = isValidLogin(user);
+		final RequestDispatcher distpatcher = isValidLogin ? setDistpatcherToHome(request, response)
+				: setDistpatcherToLogin(request, username, password, MSG_NOT_LOGIN);
+		if (!isValidLogin) {
+			log.info(MSG_NOT_LOGIN);
+			distpatcher.forward(request, response);
 		} else {
-			System.out.println("Usuario y/o contrase&ntilde;a no validos");
-			request.setAttribute("msg", "Usuario y/o contrase&ntilde;a no validos");
+			log.info("Login data accepted...");
+			addUserToSession(request, user);
 		}
-		getRequestDispatcher(request).forward(request, response);
 	}
 
-	private RequestDispatcher getRequestDispatcher(final HttpServletRequest request) {
-		return request.getRequestDispatcher(PAGE);
+	private User select(final String username, final String password) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (final ClassNotFoundException ex) {
+			log.error(ex);
+		}
+		return controller.select(username, password.toCharArray());
+	}
+
+	private boolean isValidLogin(final User user) {
+		return user != null && user.isEnabled();
+	}
+
+	private RequestDispatcher setDistpatcherToHome(final HttpServletRequest request, final HttpServletResponse response)
+			throws IOException {
+		final RequestDispatcher distpatcher = getRequestDispatcher(request, HomeServlet.VIEW);
+		response.sendRedirect(request.getContextPath() + "/");
+		return distpatcher;
 	}
 }

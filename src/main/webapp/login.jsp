@@ -13,28 +13,23 @@
     <body class="bg-black" onload="document.loginForm.username.focus();">
     	<br/>
     	<c:if test="${not empty msg}">
-            	<div class="alert alert-danger alert-dismissable">
-            		<i class="fa fa-ban"></i>
-            		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            		<b>Error!</b> ${msg}
-            	</div>
-            </c:if>
-            <div class="alert alert-danger alert-dismissable">
-            		<i class="fa fa-ban"></i>
-            		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            		<b>Error!</b> <c:out value="${msg}"/>
-            	</div>
+    		<div class="alert alert-danger alert-dismissable">
+    			<i class="fa fa-ban"></i>
+    			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    			<b>Error!</b> ${msg}
+    		</div>
+    	</c:if>
         <div class="form-box" id="login-box">
             <div class="header">Iniciar sesi&oacute;n</div>
-            <form name="loginForm" method='POST' action='login'>
+            <form name="loginForm" method='POST'>
                 <div class="body bg-gray">
                     <div class="form-group">
                         <input type='text' name='username' class='form-control' required='required' placeholder='Usuario'
-                        	autocomplete='off' value='<c:out value="${username}"/>' ></input>
+                        	autocomplete='off' value='${username}' ></input>
                     </div>
                     <div class="form-group">
                         <input type='password' name='password' class='form-control' required='required' placeholder='Contrase&ntilde;a'
-                        	autocomplete='off' value='<c:out value="${password}"/>' ></input>
+                        	autocomplete='off' value='${password}' ></input>
                     </div>
                 </div>
                 <div class="footer">
