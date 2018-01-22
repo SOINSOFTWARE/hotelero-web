@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.soinsoftware.hotelero.core.controller.UserController;
+import com.soinsoftware.hotelero.persistence.entity.Role;
 import com.soinsoftware.hotelero.persistence.entity.User;
 
 import lombok.extern.log4j.Log4j;
@@ -82,7 +83,12 @@ public class LoginServlet extends AbstractServlet {
 	}
 
 	private boolean isValidLogin(final User user) {
-		return user != null && user.isEnabled();
+		boolean isValid = false;
+		if (user != null && user.isEnabled()) {
+			final Role role = user.getRole();
+			isValid = role != null && role.isEnabled();
+		}
+		return isValid;
 	}
 
 	private RequestDispatcher setDistpatcherToHome(final HttpServletRequest request, final HttpServletResponse response)

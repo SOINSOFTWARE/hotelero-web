@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class HomeServlet
  */
-@WebServlet(name = "home", urlPatterns = { "/home", "/" })
+@WebServlet(name = "home", urlPatterns = "/home")
 public class HomeServlet extends AbstractServlet {
 
 	private static final long serialVersionUID = 7349453200699301557L;
@@ -29,9 +29,15 @@ public class HomeServlet extends AbstractServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		final RequestDispatcher distpatcher = hasLogged(request) ? getRequestDispatcher(request, VIEW)
-				: setDistpatcherToLogin(request, "", "", "");
-		distpatcher.include(request, response);
+		RequestDispatcher distpatcher = null;
+		if (hasLogged(request)) {
+			distpatcher = getRequestDispatcher(request, VIEW);
+			distpatcher.include(request, response);
+		} else {
+			distpatcher = setDistpatcherToLogin(request, "", "", "");
+			response.sendRedirect(request.getContextPath() + "/login");
+		}
+		
 	}
 
 	/**
