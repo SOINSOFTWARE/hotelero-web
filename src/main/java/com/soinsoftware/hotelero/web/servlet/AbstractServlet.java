@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.soinsoftware.hotelero.persistence.entity.User;
+import com.soinsoftware.hotelero.web.controller.MenuController;
 
 /**
  * 
@@ -21,6 +22,8 @@ public class AbstractServlet extends HttpServlet {
 	private static final long serialVersionUID = -7904234818630740985L;
 
 	private static final String ATTRIBUTE_USER = "user";
+
+	private static final String ATTRIBUTE_MENU_CONTROLLER = "menuController";
 
 	protected RequestDispatcher getRequestDispatcher(final HttpServletRequest request, final String view) {
 		return request.getRequestDispatcher(view);
@@ -51,6 +54,26 @@ public class AbstractServlet extends HttpServlet {
 
 	protected boolean hasLogged(final HttpServletRequest request) {
 		return getUserFromSession(request) != null;
+	}
+
+	protected void buildMenu(final HttpServletRequest request) {
+		MenuController controller = getMenuControllerFromSession(request);
+		if (controller == null) {
+			final User loggedUser = getUserFromSession(request);
+			controller = new MenuController(loggedUser);
+			addMenuControllerToSession(request, controller);
+		}
+		controller.addAttributesForMenu(request);
+	}
+
+	protected void addMenuControllerToSession(final HttpServletRequest request, final MenuController controller) {
+		final HttpSession session = request.getSession();
+		session.setAttribute(ATTRIBUTE_MENU_CONTROLLER, controller);
+	}
+
+	protected MenuController getMenuControllerFromSession(final HttpServletRequest request) {
+		final HttpSession session = request.getSession(false);
+		return (session != null) ? (MenuController) session.getAttribute(ATTRIBUTE_MENU_CONTROLLER) : null;
 	}
 
 	protected void invalidateSession(final HttpServletRequest request) {

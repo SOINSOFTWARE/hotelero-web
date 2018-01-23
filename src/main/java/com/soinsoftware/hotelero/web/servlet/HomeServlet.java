@@ -31,13 +31,13 @@ public class HomeServlet extends AbstractServlet {
 			throws ServletException, IOException {
 		RequestDispatcher distpatcher = null;
 		if (hasLogged(request)) {
+			buildMenu(request);
 			distpatcher = getRequestDispatcher(request, VIEW);
 			distpatcher.include(request, response);
 		} else {
 			distpatcher = setDistpatcherToLogin(request, "", "", "");
 			response.sendRedirect(request.getContextPath() + "/login");
-		}
-		
+		}		
 	}
 
 	/**

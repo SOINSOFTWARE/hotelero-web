@@ -110,6 +110,19 @@
                     <li><a href="pages/examples/blank.html"><i class="fa fa-angle-double-right"></i> Blank Page</a></li>
                 </ul>
             </li>
+            <c:if test="${showRoleMenu}">
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-gear"></i> <span>Configuraci&oacute;n</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                	<c:if test="${showRoleMenu}">
+                    <li><a href="pages/examples/invoice.html"><i class="fa fa-angle-double-right"></i> Roles</a></li>
+                    </c:if>
+                </ul>
+            </li>
+            </c:if>
         </ul>
     </section>
     <!-- /.sidebar -->
